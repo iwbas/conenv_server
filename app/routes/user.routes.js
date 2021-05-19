@@ -15,8 +15,8 @@ module.exports = function (app) {
   app.get('/api/test/user', [authJWT.verifyToken], controller.userBoard);
 
   app.get(
-    '/api/test/mod',
-    [authJWT.verifyToken, authJWT.isModerator],
+    '/api/test/teacher',
+    [authJWT.verifyToken, authJWT.isTeacher],
     controller.moderatorBoard
   );
 
@@ -25,4 +25,16 @@ module.exports = function (app) {
     [authJWT.verifyToken, authJWT.isAdmin],
     controller.adminBoard
   );
+
+  app.get(
+    '/api/users/',
+    [authJWT.verifyToken, authJWT.isAdmin],
+    controller.getAllUsers
+  )
+
+  app.get(
+    '/api/myusers',
+    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
+    controller.getMyUsers
+  )
 };

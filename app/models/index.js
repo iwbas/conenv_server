@@ -16,29 +16,18 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.user  = require('./user.model.js')(sequelize, Sequelize);
+db.group = require('./group.model')(sequelize, Sequelize);
 db.role  = require('./role.model.js')(sequelize, Sequelize);
 db.task  = require('./task.model.js')(sequelize, Sequelize);
 db.topic = require('./topic.model.js')(sequelize, Sequelize);
 
-db.role.belongsToMany(db.user, {
-  through: 'user_roles',
-  foreignKey: 'roleId',
-  otherKey: 'userId',
-});
-
-db.user.belongsToMany(db.role, {
-  through: 'user_roles',
-  foreignKey: 'userId',
-  otherKey: 'roleId',
-});
-
 db.user.belongsTo(db.user, {as: "created_by"})
+db.user.belongsTo(db.role, {as: "role"})
+db.user.belongsTo(db.group, {as: "group"})
 
-db.ROLES = ['user', 'admin', 'moderator'];
-
+// db.ROLES = ['user', 'admin', 'moderator'];
+db.ROLES = ['user', 'teacher', 'admin'];
 
 db.task.belongsTo(db.topic)
-
-// git commit -m "task and topic models implemented"
 
 module.exports = db;

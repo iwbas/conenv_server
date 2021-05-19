@@ -1,5 +1,6 @@
 // const db = require("./app/models");
 const db = require('./app/models')
+const User = db.user;
 const Role = db.role;
 
 // dev
@@ -19,13 +20,22 @@ function initial() {
  
   Role.create({
     id: 2,
-    name: "moderator"
+    name: "teacher"
   });
  
   Role.create({
     id: 3,
     name: "admin"
   });
+
+  User.create({
+    "username": "admin",
+    "email": "admin@gmail.com",
+    "password": "12345678",
+    "name": "Админ",
+    "surname": "Админ",
+    "roleId": 3
+  })
 }
 
 const express = require('express');

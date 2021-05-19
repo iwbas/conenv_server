@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config');
 const db = require('../models');
 const User = db.user;
+const Role = db.role;
 
 function verifyToken(req, res, next) {
   let token = req.headers['x-access-token'];
@@ -13,6 +14,7 @@ function verifyToken(req, res, next) {
   }
 
   jwt.verify(token, config.secret, (err, decoded) => {
+    console.log('decoded', decoded);
     if (err) {
       return res.status(401).send({
         message: 'Unauthorized!',
@@ -26,12 +28,10 @@ function verifyToken(req, res, next) {
 
 function isAdmin(req, res, next) {
   User.findByPk(req.userId).then((user) => {
-    user.getRoles().then((roles) => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name == 'admin') {
-          next();
-          return;
-        }
+    user.getRole().then((role) => {
+      if (role.name == 'admin') {
+        next();
+        return;
       }
 
       res.status(403).send({
@@ -42,40 +42,34 @@ function isAdmin(req, res, next) {
   });
 }
 
-function isModerator (req, res, next) {
-  User.findByPk(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
-          next();
-          return;
-        }
+function isTeacher(req, res, next) {
+  User.findByPk(req.userId).then((user) => {
+    user.getRole().then((role) => {
+      if (role.name === 'teacher') {
+        next();
+        return;
       }
 
       res.status(403).send({
-        message: "Require Moderator Role!"
+        message: 'Require Teacher Role!',
       });
     });
   });
-};
+}
 
-function isModeratorOrAdmin(req, res, next) {
+function isTeacherOrAdmin(req, res, next) {
   User.findByPk(req.userId).then((user) => {
-    user.getRoles().then((roles) => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === 'moderator') {
-          next();
-          return;
-        }
+    console.log('USER', user);
+    console.log('id', user.roleId);
 
-        if (roles[i].name === 'admin') {
-          next();
-          return;
-        }
+    user.getRole().then((role) => {
+      if (role.name === 'teacher' || role.name === 'admin') {
+        next();
+        return;
       }
 
       res.status(403).send({
-        message: 'Require Moderator or Admin role!',
+        message: 'Require Teacher or Admin role!',
       });
     });
   });
@@ -84,8 +78,8 @@ function isModeratorOrAdmin(req, res, next) {
 const authJWT = {
   verifyToken,
   isAdmin,
-  isModerator,
-  isModeratorOrAdmin
+  isTeacher,
+  isTeacherOrAdmin,
 };
 
 module.exports = authJWT;
