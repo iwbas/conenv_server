@@ -14,6 +14,7 @@ function newUser(req, res, role) {
     name: req.body.name,
     surname: req.body.surname,
     patronymic: req.body.patronymic ? req.body.patronymic : null,
+    groupId: req.body.groupId ? req.body.groupId : null
   })
     .then((user) => {
       user.setRole(role).then((_) => {
