@@ -3,6 +3,9 @@ const db = require('./app/models')
 const User = db.user;
 const Role = db.role;
 
+const bcrypt = require('bcryptjs');
+const authConfig = require("./app/config/auth.config")
+
 // dev
 db.sequelize.sync({force: true}).then(() => {
   console.log('Drop and Resync Db');
@@ -31,7 +34,7 @@ function initial() {
   User.create({
     "username": "admin",
     "email": "admin@gmail.com",
-    "password": "12345678",
+    "password": bcrypt.hashSync("12345678", authConfig.saltRounds),
     "name": "Админ",
     "surname": "Админ",
     "roleId": 3

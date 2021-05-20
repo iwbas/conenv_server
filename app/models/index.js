@@ -21,7 +21,8 @@ db.role  = require('./role.model.js')(sequelize, Sequelize);
 db.task  = require('./task.model.js')(sequelize, Sequelize);
 db.topic = require('./topic.model.js')(sequelize, Sequelize);
 
-db.user.belongsTo(db.user, {as: "created_by"})
+
+db.user.belongsTo(db.user, {as: "createdBy"})
 db.user.belongsTo(db.role, {as: "role"})
 db.user.belongsTo(db.group, {as: "group"})
 

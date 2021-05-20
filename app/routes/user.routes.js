@@ -10,7 +10,16 @@ module.exports = function (app) {
     next();
   });
 
-  app.get('/api/test/all', controller.allAccess);
+  app.get('/api/users/getAllUsers',
+    [authJWT.verifyToken, authJWT.isAdmin],
+    controller.getAllUsers
+  );
+};
+
+
+
+/*
+app.get('/api/test/all', controller.allAccess);
 
   app.get('/api/test/user', [authJWT.verifyToken], controller.userBoard);
 
@@ -37,4 +46,5 @@ module.exports = function (app) {
     [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
     controller.getMyUsers
   )
-};
+
+*/

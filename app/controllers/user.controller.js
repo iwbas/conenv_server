@@ -1,26 +1,41 @@
-const db   = require('../models');
+const db = require('../models');
 const User = db.user;
 const Role = db.role;
-
-exports.allAccess = (req, res) => {
-  res.status(200).send('Public Content.');
-};
-
-exports.userBoard = (req, res) => {
-  res.status(200).send('User Content.');
-};
-
-exports.adminBoard = (req, res) => {
-  res.status(200).send('Admin Content.');
-};
-
-exports.moderatorBoard = (req, res) => {
-  res.status(200).send('Moderator Content.');
-};
+const Group = db.group;
 
 exports.getAllUsers = (req, res) => {
-  User.findAll().then(users => {
+  // user,role,group
+  User.findAll({
+    attributes: {
+      exclude: ['password', 'groupId', 'roleId', 'createdById' ],
+    },
+    include: [
+      // 'createdBy',
+      {
+        model: User,
+        as: "createdBy",
+        attributes: ['id', 'username']
+      },
+      {
+        model: Role,
+        as: "role",
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        }
+      },
+      {
+        model: Group,
+        as: "group",
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        }
+      }
+    ]
+  }).then(users => {
     res.send({ users: users })
+  }).catch(err => {
+    console.log(err);
+    res.status(500).send({ message: err })
   });
 }
 
@@ -30,5 +45,5 @@ exports.getMyUsers = (req, res) => {
     where: {
       groupId: req.userId
     }
-  }).then(users => res.send({users: users}));
+  }).then(users => res.send({ users: users }));
 };

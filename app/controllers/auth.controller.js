@@ -7,6 +7,8 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 
 function newUser(req, res, role) {
+  console.log(req);
+
   return User.create({
     username: req.body.username,
     email: req.body.email,
@@ -14,12 +16,16 @@ function newUser(req, res, role) {
     name: req.body.name,
     surname: req.body.surname,
     patronymic: req.body.patronymic ? req.body.patronymic : null,
-    groupId: req.body.groupId ? req.body.groupId : null
+    groupId: req.body.groupId ? req.body.groupId : null,
+    roleId: role,
+    createdById: req.userId,
   })
     .then((user) => {
-      user.setRole(role).then((_) => {
-        res.send({ message: 'User was registered successfully!' });
-      });
+      res.send({ message: 'User was registered successfully!' });
+
+      // user.setRole(role).then((_) => {
+      //   res.send({ message: 'User was registered successfully!' });
+      // });
     })
     .catch((err) => res.status(500).send({ message: err.message }));
 }
