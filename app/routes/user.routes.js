@@ -1,5 +1,6 @@
-const { authJWT } = require('../middleware');
+const { authJWT, verifySignUp } = require('../middleware');
 const controller = require('../controllers/user.controller');
+const authController = require('../controllers/auth.controller');
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -10,41 +11,28 @@ module.exports = function (app) {
     next();
   });
 
-  app.get('/api/users/getAllUsers',
-    [authJWT.verifyToken, authJWT.isAdmin],
+  app.post(
+    '/api/users',
+    [
+      authJWT.verifyToken,
+      authJWT.isTeacherOrAdmin,
+      verifySignUp.checkDuplicateUsernameOrEmail,
+    ],
+    authController.createUser
+  );
+
+  // get the list of notes
+  app.get('/api/users/',
+    //[authJWT.verifyToken, authJWT.isTeacherOrAdmin],
     controller.getAllUsers
   );
+
+  // get a single note
+  app.get('/api/users/:id', controller.getUser);
+
+  // update a note
+  app.put('/api/users/:id', controller.updateUser);
+
+  // delete a note
+  app.delete('/api/users/:id', controller.deleteUser);
 };
-
-
-
-/*
-app.get('/api/test/all', controller.allAccess);
-
-  app.get('/api/test/user', [authJWT.verifyToken], controller.userBoard);
-
-  app.get(
-    '/api/test/teacher',
-    [authJWT.verifyToken, authJWT.isTeacher],
-    controller.moderatorBoard
-  );
-
-  app.get(
-    '/api/test/admin',
-    [authJWT.verifyToken, authJWT.isAdmin],
-    controller.adminBoard
-  );
-
-  app.get(
-    '/api/users/',
-    [authJWT.verifyToken, authJWT.isAdmin],
-    controller.getAllUsers
-  )
-
-  app.get(
-    '/api/myusers',
-    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
-    controller.getMyUsers
-  )
-
-*/

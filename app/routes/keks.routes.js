@@ -1,6 +1,11 @@
 const { verifySignUp, authJWT } = require('../middleware');
 const controller = require('../controllers/auth.controller');
 
+const crud = require('express-sequelize-crud')
+const {sequelizeCrud} = crud;
+const db = require('../models');
+const User = db.user;
+
 module.exports = function (app) {
   app.use(function (req, res, next) {
     res.header(
@@ -10,15 +15,5 @@ module.exports = function (app) {
     next();
   });
 
-  app.post(
-    '/api/auth/createUser',
-    [
-      authJWT.verifyToken,
-      authJWT.isTeacherOrAdmin,
-      verifySignUp.checkDuplicateUsernameOrEmail,
-    ],
-    controller.createUser
-  );
-
-  app.post("/api/auth/signin", controller.signin)
+  // app.use(crud.crud('/api/test', sequelizeCrud(User)))
 };

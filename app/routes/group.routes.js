@@ -1,4 +1,4 @@
-const controller = require('../controllers/role.controller');
+const controller = require('../controllers/group.controller');
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -10,8 +10,8 @@ module.exports = function (app) {
   });
 
   // get the list of notes
-  app.get('/api/roles/',
+  app.get('/api/groups/',
     //[authJWT.verifyToken, authJWT.isAdmin],
-    controller.getAllRoles
+    controller.getAllGroups
   );
 };

@@ -28,6 +28,9 @@ function verifyToken(req, res, next) {
 
 function isAdmin(req, res, next) {
   User.findByPk(req.userId).then((user) => {
+
+    if (!user) return res.status(401).send({message: 'Unauthorized!'})
+
     user.getRole().then((role) => {
       if (role.name == 'admin') {
         next();
@@ -44,6 +47,9 @@ function isAdmin(req, res, next) {
 
 function isTeacher(req, res, next) {
   User.findByPk(req.userId).then((user) => {
+
+    if (!user) return res.status(401).send({message: 'Unauthorized!'})
+
     user.getRole().then((role) => {
       if (role.name === 'teacher') {
         next();
@@ -59,11 +65,12 @@ function isTeacher(req, res, next) {
 
 function isTeacherOrAdmin(req, res, next) {
   User.findByPk(req.userId).then((user) => {
-    console.log('USER', user);
-    console.log('id', user.roleId);
+
+    if (!user) return res.status(401).send({message: 'Unauthorized!'})
 
     user.getRole().then((role) => {
       if (role.name === 'teacher' || role.name === 'admin') {
+        req.role = role.name
         next();
         return;
       }
