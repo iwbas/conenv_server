@@ -130,6 +130,8 @@ exports.deleteUser = (req, res) => {
   if (req.role === "teacher")
     condition.createdById = req.userId;
 
+  console.log(req.role, condition)
+
   User.destroy({
     where: condition,
   })
