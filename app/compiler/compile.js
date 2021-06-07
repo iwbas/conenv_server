@@ -7,6 +7,10 @@ function random(size) {
 }
 
 exports.compile = (req, res) => {
+  
+};
+
+exports.run = (req, res) => {
   // var language = req.body.language;
   var code = req.body.code;
   var stdin = req.body.stdin;

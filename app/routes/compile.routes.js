@@ -15,4 +15,6 @@ module.exports = function (app) {
 //     //[authJWT.verifyToken, authJWT.isAdmin],
 //     controller.getAllRoles
 //   );
+
+  app.post('/api/run', controller.run);
 };
