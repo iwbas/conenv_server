@@ -129,6 +129,7 @@ require('./app/routes/user.routes')(app);
 require('./app/routes/keks.routes')(app);
 require('./app/routes/role.routes')(app);
 require('./app/routes/group.routes')(app);
+require('./app/routes/compile.routes')(app);
 
 const PORT = process.env.PORT || 8080;
 
