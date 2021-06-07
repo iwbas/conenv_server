@@ -7,7 +7,7 @@ function random(size) {
 }
 
 exports.compile = (req, res) => {
-  var language = req.body.language;
+  // var language = req.body.language;
   var code = req.body.code;
   var stdin = req.body.stdin;
   
@@ -29,6 +29,6 @@ exports.compile = (req, res) => {
   sandboxType.run(function(data,exec_time,err)
   {
       //console.log("Data: received: "+ data)
-    res.send({output:data, langid: language,code:code, errors:err, time:exec_time});
+    res.send({output:data, /* langid: language, */code:code, errors:err, time:exec_time});
   });
 };
