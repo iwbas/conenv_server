@@ -1,13 +1,29 @@
-const db = require('../models');
-const config = require('../config/auth.config');
+const db = require("../models");
+const config = require("../config/auth.config");
 const User = db.user;
 const Role = db.role;
+const ROLES = db.ROLES;
 
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
+var jwt = require("jsonwebtoken");
+var bcrypt = require("bcryptjs");
 
-function newUser(req, res, role) {
-  console.log(req);
+// isTeacherOrAdmin
+exports.createUser = (req, res) => {
+  console.log("req.body.role", req.body.role);
+
+  var roleId;
+
+  // ПИСАЛ СОННЫЙ
+
+  //Преподаватель может создавать только пользователей
+  //|| Админ может не указывать роль, тогда создастся юзер
+  if (req.role === "teacher" || req.body.role === undefined)
+    roleId = 1;
+  else
+    roleId = ROLES.indexOf(req.body.role) + 1;
+
+  if (roleId !== 1 && roleId !== 2)
+    return res.status(400).send({ message: "Недопустимая роль." })
 
   return User.create({
     username: req.body.username,
@@ -17,27 +33,13 @@ function newUser(req, res, role) {
     surname: req.body.surname,
     patronymic: req.body.patronymic ? req.body.patronymic : null,
     groupId: req.body.groupId ? req.body.groupId : null,
-    roleId: role,
+    roleId: roleId,
     createdById: req.userId,
   })
     .then((user) => {
-      res.send({ message: 'User was registered successfully!' });
-
-      // user.setRole(role).then((_) => {
-      //   res.send({ message: 'User was registered successfully!' });
-      // });
+      res.send({ message: "User was registered successfully!" });
     })
     .catch((err) => res.status(500).send({ message: err.message }));
-}
-
-// isTeacherOrAdmin
-exports.createUser = (req, res) => {
-  newUser(req, res, 1);
-};
-
-// isAdmin
-exports.createTeacher = (req, res) => {
-  newUser(req, res, 2);
 };
 
 exports.signin = (req, res) => {
@@ -48,7 +50,7 @@ exports.signin = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        return res.status(404).send({ message: "Пользователь не найден" });
       }
 
       var isPasswordValid = bcrypt.compareSync(
@@ -59,7 +61,7 @@ exports.signin = (req, res) => {
       if (!isPasswordValid) {
         return res
           .status(401)
-          .send({ accessToken: null, message: 'Неверный пароль!' });
+          .send({ accessToken: null, message: "Неверный пароль!" });
       }
 
       var token = jwt.sign({ id: user.id }, config.secret, {
