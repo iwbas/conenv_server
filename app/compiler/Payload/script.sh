@@ -23,12 +23,10 @@ addtionalArg=$4
 #	- The output of the stream is then sent to respective files
 #	
 #	
-#	- if third arguemtn is empty Branch 1 is followed. An interpretor was called
-#	- else Branch2 is followed, a compiler was invoked
-#	- In Branch2. We first check if the compile operation was a success (code returned 0)
-#	
-#	- If the return code from compile is 0 follow Branch2a and call the output command
-#	- Else follow Branch2b and output error Message
+#	- First we compile program
+# 	- if program compiled without errors ($? -eq 0), then we
+#	- run program if output is not empty,
+#   - or just display message that compiling was successful
 #	
 #	- Stderr and Stdout are restored
 #	- Once the logfile is completely written, it is renamed to "completed"
@@ -43,28 +41,26 @@ exec  2> $"/usercode/errors"
 #3>&1 4>&2 >
 
 START=$(date +%s.%2N)
-#Branch 1
-if [ "$output" = "" ]; then
-    $compiler /usercode/$file -< $"/usercode/inputFile" #| tee /usercode/output.txt
-#Branch 2
+
+#In case of compile errors, redirect them to a file
+$compiler /usercode/$file $addtionalArg #&> /usercode/errors.txt
+if [ $? -eq 0 ];	then
+	# $output -< $"/usercode/inputFile" #| tee /usercode/output.txt    
+	if [ "$output" != "" ]; then
+        $output -< $"/usercode/inputFile" #| tee /usercode/output.txt    
+    else 
+        echo "Compiled"
+    fi
 else
-	#In case of compile errors, redirect them to a file
-        $compiler /usercode/$file $addtionalArg #&> /usercode/errors.txt
-	#Branch 2a
-	if [ $? -eq 0 ];	then
-		$output -< $"/usercode/inputFile" #| tee /usercode/output.txt    
-	#Branch 2b
-	else
-	    echo "Compilation Failed"
-	    #if compilation fails, display the output file	
-	    #cat /usercode/errors.txt
-	fi
+	echo "Compilation Failed"
+	#if compilation fails, display the output file	
+	#cat /usercode/errors.txt
 fi
 
 #exec 1>&3 2>&4
 
 #head -100 /usercode/logfile.txt
-#touch /usercode/completed
+# touch /usercode/completed
 END=$(date +%s.%2N)
 runtime=$(echo "$END - $START" | bc)
 
@@ -73,4 +69,5 @@ echo "*-COMPILEBOX::ENDOFOUTPUT-*" $runtime
 
 
 mv /usercode/logfile.txt /usercode/completed
-
+# touch /usercode/completed
+# head -1000 /usercode/logfile.txt >> /usercode/completed
