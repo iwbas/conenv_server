@@ -13,18 +13,18 @@ module.exports = function (app) {
 
   app.post(
     "/api/users",
-    [
-      authJWT.verifyToken,
-      authJWT.isTeacherOrAdmin,
-      verifySignUp.checkDuplicateUsernameOrEmail,
-    ],
+    // [
+    //   authJWT.verifyToken,
+    //   authJWT.isTeacherOrAdmin,
+    //   verifySignUp.checkDuplicateUsernameOrEmail,
+    // ],
     authController.createUser
   );
 
   // get the list of notes
   app.get(
     "/api/users/",
-    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
+    //[authJWT.verifyToken, authJWT.isTeacherOrAdmin],
     controller.getAllUsers
   );
 
@@ -37,10 +37,10 @@ module.exports = function (app) {
   // delete a note
   app.delete(
     "/api/users/:id",
-    [
-      authJWT.verifyToken,
-      authJWT.isTeacherOrAdmin,
-    ],
+    // [
+    //   authJWT.verifyToken,
+    //   authJWT.isTeacherOrAdmin,
+    // ],
     controller.deleteUser
   );
 };
