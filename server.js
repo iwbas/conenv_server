@@ -100,6 +100,11 @@ function initial() {
     "surname": "Админ",
     "roleId": 3
   })
+
+  db.sequelize.query(
+    `CREATE RULE InsteadOfDeleteRole AS ON DELETE TO roles
+    DO INSTEAD NOTHING;`
+  );
 }
 
 const express = require('express');
