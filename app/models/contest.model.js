@@ -1,5 +1,5 @@
-module.exports = (sequielize, Sequelize) => {
-  const Contest = sequielize.define("contests", {
+module.exports = (sequelize, Sequelize) => {
+  const Contest = sequelize.define("contests", {
     name: {
       type: Sequelize.STRING,
       allowNull: false,

@@ -1,5 +1,5 @@
-module.exports = (sequielize, Sequelize) => {
-  const Group = sequielize.define('groups', {
+module.exports = (sequelize, Sequelize) => {
+  const Group = sequelize.define('groups', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,

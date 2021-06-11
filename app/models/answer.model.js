@@ -1,5 +1,5 @@
-module.exports = (sequielize, Sequelize) => {
-    const Answer = sequielize.define("answer", {
+module.exports = (sequelize, Sequelize) => {
+    const Answer = sequelize.define("answers", {
       content: {
         type: Sequelize.TEXT,
         allowNull: false,
