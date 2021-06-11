@@ -23,29 +23,10 @@ exports.getAllUsers = (req, res) => {
           }
         : null,
     attributes: {
-      exclude: ['password', 'groupId', 'roleId', 'createdById'],
+      exclude: ['password', 
+    //  'groupId', 'roleId', 'creatorId'
+    ],
     },
-    // include: [
-    //   {
-    //     model: User,
-    //     as: "createdBy",
-    //     attributes: ["id", "username"],
-    //   },
-    //   {
-    //     model: Role,
-    //     as: "role",
-    //     attributes: {
-    //       exclude: ["createdAt", "updatedAt"],
-    //     },
-    //   },
-    //   {
-    //     model: Group,
-    //     as: "group",
-    //     attributes: {
-    //       exclude: ["createdAt", "updatedAt"],
-    //     },
-    //   },
-    // ],
   })
     .then((data) => {
       res.setHeader("Access-Control-Expose-Headers", "Content-Range");
