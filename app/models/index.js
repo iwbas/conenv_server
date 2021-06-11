@@ -21,10 +21,9 @@ db.role = require("./role.model.js")(sequelize, Sequelize);
 db.task = require("./task.model.js")(sequelize, Sequelize);
 db.topic = require("./topic.model.js")(sequelize, Sequelize);
 db.contest = require("./contest.model.js")(sequelize, Sequelize);
-db.answer = require("./answer.model.js")(sequelize, Sequelize);
-db.contest_task = require("./contest_task.model")(sequelize, Sequelize);
+db.contest_user = require("./contest_user.model")(sequelize, Sequelize);
 
-// User have one creator
+// User have one creator --- DONE
 db.user.hasOne(db.user, {
   as: "creator",
   foreignKey: "creatorId",
@@ -33,14 +32,14 @@ db.user.hasOne(db.user, {
   // db.user.belongsTo(db.user, {
 });
 
-// user *--1 group
+// user *--1 group -- DONE
 db.group.hasMany(db.user, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
 db.user.belongsTo(db.group, { as: "group" });
 
-// user *--1 role
+// user *--1 role -- DONE
 db.role.hasMany(db.user, {
   onDelete: "RESTRICT",
   onUpdate: "RESTRICT",
@@ -50,38 +49,30 @@ db.user.belongsTo(db.role, { as: "role", foreignKey: { allowNull: false } });
 // db.ROLES = ['user', 'admin', 'moderator'];
 db.ROLES = ["user", "teacher", "admin"];
 
-// task *--1 topic
+// task *--1 topic -- DONE
 db.topic.hasMany(db.task, { onDelete: "CASCADE", onUpdate: "CASCADE" });
 db.task.belongsTo(db.topic);
 
-// task *--* contest
-db.task.belongsToMany(db.contest, {
-  through: db.contest_task,
-  as: "contests",
-  foreignKey: "task_id",
+// contest *--1 task -- DONE
+db.task.hasMany(db.contest, {
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+  foreignKey: {
+    allowNull: false,
+  },
 });
-db.contest.belongsToMany(db.task, {
-  through: db.contest_task,
-  as: "tasks",
-  foreignKey: "contest_id",
-});
+db.contest.belongsTo(db.task);
 
-// user *--* contest
+// user *--* contest -- DONE
 db.user.belongsToMany(db.contest, {
-  through: "contest_user",
+  through: db.contest_user,
   as: "contests",
   foreignKey: "user_id",
 });
 db.contest.belongsToMany(db.user, {
-  through: "contest_user",
+  through: db.contest_user,
   as: "users",
   foreignKey: "contest_id",
 });
-
-db.answer.belongsTo(db.user, {
-  as: "author",
-  foreignKey: { allowNull: false },
-});
-db.answer.belongsTo(db.contest_task);
 
 module.exports = db;
