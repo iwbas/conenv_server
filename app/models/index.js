@@ -37,7 +37,10 @@ db.group.hasMany(db.user, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
-db.user.belongsTo(db.group, { as: "group" });
+db.group.belongsTo(db.user, {
+  as: "creator",
+  constraints: false
+});
 
 // user *--1 role -- DONE
 db.role.hasMany(db.user, {
