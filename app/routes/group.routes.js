@@ -1,17 +1,25 @@
-const controller = require('../controllers/group.controller');
+const controller = require("../controllers/group.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
     res.header(
-      'Access-Control-Allow-Headers',
-      'x-access-token, Origin, Content-Type, Accept'
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
     );
     next();
   });
 
-  // get the list of notes
-  app.get('/api/groups/',
+  app.post("/api/groups", controller.createGroup);
+
+  app.get(
+    "/api/groups/",
     //[authJWT.verifyToken, authJWT.isAdmin],
     controller.getAllGroups
   );
+
+  app.get("/api/groups/:id", controller.getGroup);
+
+  app.put("/api/groups/:id", controller.updateGroup);
+
+  app.delete("/api/groups/:id", controller.deleteGroup);
 };
