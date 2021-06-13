@@ -18,77 +18,62 @@ db.sequelize.sync({ force: true }).then(() => {
 
 function initial() {
   Role.create({
-    id: 1,
     name: "user"
   });
 
   Role.create({
-    id: 2,
     name: "teacher"
   });
 
   Role.create({
-    id: 3,
     name: "admin"
   });
 
   Role.create({
-    id: 4,
     name: "1"
   });
 
   Role.create({
-    id: 5,
     name: "2"
   });
 
   Role.create({
-    id: 6,
     name: "3"
   });
 
   Role.create({
-    id: 7,
     name: "4"
   });
 
   Role.create({
-    id: 8,
     name: "5"
   });
 
   Role.create({
-    id: 9,
     name: "6"
   });
 
   Role.create({
-    id: 10,
     name: "7"
   });
 
   Role.create({
-    id: 11,
     name: "8"
   });
 
   Role.create({
-    id: 12,
     name: "9"
   });
 
   Role.create({
-    id: 13,
     name: "10"
   });
 
   Role.create({
-    id: 14,
     name: "12"
   });
   
   Group.create({
-    id: 1,
     name: "Учебная группа"
   })
 
