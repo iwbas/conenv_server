@@ -17,13 +17,11 @@ exports.createUser = (req, res) => {
 
   //Преподаватель может создавать только пользователей
   //|| Админ может не указывать роль, тогда создастся юзер
-  if (req.role === "teacher" || req.body.role === undefined)
-    roleId = 1;
-  else
-    roleId = ROLES.indexOf(req.body.role) + 1;
+  if (req.role === "teacher" || req.body.role === undefined) roleId = 1;
+  else roleId = ROLES.indexOf(req.body.role) + 1;
 
   if (roleId !== 1 && roleId !== 2)
-    return res.status(400).send({ message: "Недопустимая роль." })
+    return res.status(400).send({ message: "Недопустимая роль." });
 
   return User.create({
     username: req.body.username,

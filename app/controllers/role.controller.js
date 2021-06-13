@@ -22,7 +22,7 @@ exports.getAllRoles = (req, res) => {
       res.setHeader("Access-Control-Expose-Headers", "Content-Range");
       res.setHeader(
         "Content-Range",
-        `users ${offset}-${offset + limit}/${data.count}`
+        `roles ${offset}-${offset + limit}/${data.count}`
       );
       res.send(data.rows);
     })
