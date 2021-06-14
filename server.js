@@ -91,9 +91,9 @@ function initial() {
     DO INSTEAD NOTHING;`
   );
 
-  db.sequelize.query(`ALTER TABLE public."groups"` +
-  ` ADD CONSTRAINT "groups_creatorId_fkey" FOREIGN KEY ("creatorId") ` +
-  ` REFERENCES public."users" (id) MATCH SIMPLE ON UPDATE SET NULL ON DELETE SET NULL`);
+  // db.sequelize.query(`ALTER TABLE public."groups"` +
+  // ` ADD CONSTRAINT "groups_creatorId_fkey" FOREIGN KEY ("creatorId") ` +
+  // ` REFERENCES public."users" (id) MATCH SIMPLE ON UPDATE SET NULL ON DELETE SET NULL`);
 }
 
 const express = require("express");
