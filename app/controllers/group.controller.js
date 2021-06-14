@@ -6,6 +6,7 @@ const getPagination = require("../common/getPagination");
 exports.createGroup = (req, res) => {
   return Group.create({
     name: req.body.name,
+    creatorId: req.userId,
   })
     .then((group) => {
       // res.send({ message: "Group was created successfully!" });
@@ -56,7 +57,7 @@ exports.getGroup = (req, res) => {
 };
 
 exports.updateGroup = (req, res) => {
-  console.log("update")
+  console.log("update");
   Group.update(req.body, {
     where: { id: req.params.id },
     returning: true,
@@ -72,10 +73,12 @@ exports.updateGroup = (req, res) => {
 exports.deleteGroup = (req, res) => {
   Group.destroy({
     where: { id: req.params.id },
-  }).then((result) => {
-    console.log(result);
-    res.status(200).send({ message: "Group deleted" })
-  }).catch((err) => {
-    res.status(500).send({ message: err})
   })
-}
+    .then((result) => {
+      console.log(result);
+      res.status(200).send({ message: "Group deleted" });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err });
+    });
+};

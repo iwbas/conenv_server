@@ -1,44 +1,60 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/auth.config');
-const db = require('../models');
+const jwt = require("jsonwebtoken");
+const config = require("../config/auth.config");
+const db = require("../models");
 const User = db.user;
 const Role = db.role;
 
 function verifyToken(req, res, next) {
-  let token = req.headers['x-access-token'];
+  let httpOnlyToken = req.cookies.httpOnlyToken;
+  let token = req.cookies.token;
 
-  if (!token) {
-    return res.status(403).send({
-      message: 'No token provided!',
+  if (!httpOnlyToken || !token) {
+    // res.cookies.set('httpOnlyToken', {maxAge: 0});
+    res.clearCookie("httpOnlyToken");
+    res.clearCookie("token");
+    return res.status(401).send({
+      message: "No token provided!",
     });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
-    console.log('decoded', decoded);
+  jwt.verify(httpOnlyToken, config.secret, (err, decoded) => {
+    console.log("httpOnly", decoded);
     if (err) {
-      return res.status(401).send({
-        message: 'Unauthorized!',
+      res.clearCookie("httpOnlyToken");
+      res.clearCookie("token");
+      return res.status(403).send({
+        message: "Unauthorized!",
       });
     }
-
     req.userId = decoded.id;
-    next();
+
+    jwt.verify(token, config.secret, (err, decoded) => {
+      console.log("token", decoded);
+      if (err) {
+        res.clearCookie("httpOnlyToken");
+        res.clearCookie("token");
+        return res.status(403).send({
+          message: "Unauthorized!",
+        });
+      }
+
+      next();
+    });
   });
 }
 
 function isAdmin(req, res, next) {
   User.findByPk(req.userId).then((user) => {
-
-    if (!user) return res.status(401).send({message: 'Unauthorized!'})
+    if (!user) return res.status(401).send({ message: "Unauthorized!" });
 
     user.getRole().then((role) => {
-      if (role.name == 'admin') {
+      if (role.name == "admin") {
         next();
         return;
       }
 
       res.status(403).send({
-        message: 'Require Admin role!',
+        message: "Require Admin role!",
       });
       return;
     });
@@ -47,17 +63,16 @@ function isAdmin(req, res, next) {
 
 function isTeacher(req, res, next) {
   User.findByPk(req.userId).then((user) => {
-
-    if (!user) return res.status(401).send({message: 'Unauthorized!'})
+    if (!user) return res.status(401).send({ message: "Unauthorized!" });
 
     user.getRole().then((role) => {
-      if (role.name === 'teacher') {
+      if (role.name === "teacher") {
         next();
         return;
       }
 
       res.status(403).send({
-        message: 'Require Teacher Role!',
+        message: "Require Teacher Role!",
       });
     });
   });
@@ -65,18 +80,17 @@ function isTeacher(req, res, next) {
 
 function isTeacherOrAdmin(req, res, next) {
   User.findByPk(req.userId).then((user) => {
-
-    if (!user) return res.status(401).send({message: 'Unauthorized!'})
+    if (!user) return res.status(401).send({ message: "Unauthorized!" });
 
     user.getRole().then((role) => {
-      if (role.name === 'teacher' || role.name === 'admin') {
-        req.role = role.name
+      if (role.name === "teacher" || role.name === "admin") {
+        req.role = role.name;
         next();
         return;
       }
 
       res.status(403).send({
-        message: 'Require Teacher or Admin role!',
+        message: "Require Teacher or Admin role!",
       });
     });
   });

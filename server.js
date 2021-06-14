@@ -1,4 +1,3 @@
-// const db = require("./app/models");
 const db = require("./app/models");
 const User = db.user;
 const Role = db.role;
@@ -84,6 +83,7 @@ function initial() {
     name: "Админ",
     surname: "Админ",
     roleId: 3,
+    groupId: 1
   });
 
   db.sequelize.query(
@@ -98,6 +98,8 @@ function initial() {
 
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
+// const csrf = require('csurf');
 
 const app = express();
 
@@ -113,6 +115,20 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser(authConfig.secret));
+
+
+//https://medium.com/@ryanchenkie_40935/react-authentication-how-to-store-jwt-in-a-cookie-346519310e81
+// const csrfProtection = csrf({
+//   cookie: true
+// });
+
+// app.use(csrfProtection);
+
+// app.get('/csrf-token', (req, res) => {
+//   res.json({ csrfToken: req.csrfToken() });
+// });
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to application" });

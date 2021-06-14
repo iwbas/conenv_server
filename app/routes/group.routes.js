@@ -1,4 +1,5 @@
 const controller = require("../controllers/group.controller");
+const { authJWT } = require("../middleware/index");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -9,7 +10,7 @@ module.exports = function (app) {
     next();
   });
 
-  app.post("/api/groups", controller.createGroup);
+  app.post("/api/groups", [authJWT.verifyToken], controller.createGroup);
 
   app.get(
     "/api/groups/",

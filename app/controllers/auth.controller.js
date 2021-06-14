@@ -62,21 +62,39 @@ exports.signin = (req, res) => {
           .send({ accessToken: null, message: "Неверный пароль!" });
       }
 
-      var token = jwt.sign({ id: user.id }, config.secret, {
+      var httpOnlyToken = jwt.sign({ id: user.id }, config.secret, {
         expiresIn: 86400, // 24 часа
       });
 
+      var token = jwt.sign(
+        { id: user.id, username: user.username },
+        config.secret,
+        {
+          expiresIn: 86400, // 24 часа
+        }
+      );
+
       user.getRole().then((role) => {
+        var expiryDate = new Date(Number(new Date()) + 86400);
+        // expiresIn: expiryDate,
+        res.cookie("httpOnlyToken", httpOnlyToken, { httpOnly: true });
+        res.cookie("token", token);
+
         res.status(200).send({
-          id: user.id,
           username: user.username,
           email: user.email,
           role: role.name,
-          accessToken: token,
         });
       });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.signout = (req, res) => {
+  res.clearCookie("httpOnlyToken");
+  res.clearCookie("token");
+
+  res.status(200).send({ message: "signout" });
 };
