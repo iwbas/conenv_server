@@ -10,17 +10,29 @@ module.exports = function (app) {
     next();
   });
 
-  app.post("/api/groups", [authJWT.verifyToken], controller.createGroup);
+  app.post(
+    "/api/groups",
+    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
+    controller.createGroup
+  );
 
   app.get(
     "/api/groups/",
-    //[authJWT.verifyToken, authJWT.isAdmin],
+    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
     controller.getAllGroups
   );
 
-  app.get("/api/groups/:id", controller.getGroup);
+  app.get(
+    "/api/groups/:id",
+    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
+    controller.getGroup
+  );
 
-  app.put("/api/groups/:id", controller.updateGroup);
+  app.put(
+    "/api/groups/:id",
+    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
+    controller.updateGroup
+  );
 
   app.delete("/api/groups/:id", controller.deleteGroup);
 };
