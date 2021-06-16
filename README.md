@@ -5,7 +5,7 @@
 ```javascript
 module.exports = {
     secret: "secret-key",
-    saltRounds: 8
+    saltRounds: number
 }
 ```
 
