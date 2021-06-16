@@ -86,6 +86,16 @@ function initial() {
     groupId: 1
   });
 
+  User.create({
+    username: "teacher",
+    email: "teacher@gmail.com",
+    password: bcrypt.hashSync("12345678", authConfig.saltRounds),
+    name: "Учитель",
+    surname: "Учитель",
+    roleId: 2,
+    groupId: 1
+  });
+
   db.sequelize.query(
     `CREATE RULE InsteadOfDeleteRole AS ON DELETE TO roles
     DO INSTEAD NOTHING;`

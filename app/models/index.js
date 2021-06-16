@@ -16,7 +16,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.user = require("./user.model.js")(sequelize, Sequelize);
-db.group = require("./group.model")(sequelize, Sequelize);
+db.group = require("./group.model")(sequelize, Sequelize, db.user);
 db.role = require("./role.model.js")(sequelize, Sequelize);
 db.task = require("./task.model.js")(sequelize, Sequelize);
 db.topic = require("./topic.model.js")(sequelize, Sequelize);

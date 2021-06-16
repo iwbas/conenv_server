@@ -1,12 +1,20 @@
 // TODO UNIQUE ONLY FOR OWNER ??
 
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize, User) => {
   const Group = sequelize.define("groups", {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
-    }
+      unique: "uniqueOwnerName",
+    },
+    ownerId: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: User,
+        key: "id",
+      },
+      unique: "uniqueOwnerName",
+    },
   });
 
   return Group;

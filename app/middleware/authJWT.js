@@ -22,7 +22,7 @@ function verifyToken(req, res, next) {
     if (err) {
       res.clearCookie("httpOnlyToken");
       res.clearCookie("token");
-      return res.status(403).send({
+      return res.status(401).send({
         message: "Unauthorized!",
       });
     }
@@ -33,7 +33,7 @@ function verifyToken(req, res, next) {
       if (err) {
         res.clearCookie("httpOnlyToken");
         res.clearCookie("token");
-        return res.status(403).send({
+        return res.status(401).send({
           message: "Unauthorized!",
         });
       }
@@ -49,6 +49,7 @@ function isAdmin(req, res, next) {
 
     user.getRole().then((role) => {
       if (role.name == "admin") {
+        req.role = role.name;
         next();
         return;
       }
@@ -67,6 +68,7 @@ function isTeacher(req, res, next) {
 
     user.getRole().then((role) => {
       if (role.name === "teacher") {
+        req.role = role.name;
         next();
         return;
       }

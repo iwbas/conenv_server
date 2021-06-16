@@ -34,5 +34,9 @@ module.exports = function (app) {
     controller.updateGroup
   );
 
-  app.delete("/api/groups/:id", controller.deleteGroup);
+  app.delete(
+    "/api/groups/:id",
+    [authJWT.verifyToken, authJWT.isTeacherOrAdmin],
+    controller.deleteGroup
+  );
 };
