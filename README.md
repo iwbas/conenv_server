@@ -4,7 +4,8 @@
 
 ```javascript
 module.exports = {
-    secret: "secret-key"
+    secret: "secret-key",
+    saltRounds: 8
 }
 ```
 
