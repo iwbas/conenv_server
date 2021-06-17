@@ -89,7 +89,7 @@ exports.deleteGroup = (req, res) => {
     where: condition,
   })
     .then((result) => {
-      if (result[0] === 0)
+      if (!result)
         res.status(403).send({ message: "Вы не владелец группы" });
       res.status(200).send({ message: "Group deleted" });
     })

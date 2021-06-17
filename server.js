@@ -83,7 +83,6 @@ function initial() {
     name: "Админ",
     surname: "Админ",
     roleId: 3,
-    groupId: 1
   });
 
   User.create({
