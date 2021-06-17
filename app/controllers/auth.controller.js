@@ -9,16 +9,13 @@ var bcrypt = require("bcryptjs");
 
 // isTeacherOrAdmin
 exports.createUser = (req, res) => {
-  console.log("req.body.role", req.body.role);
-
   var roleId;
 
-  // ПИСАЛ СОННЫЙ
-
-  //Преподаватель может создавать только пользователей
-  //|| Админ может не указывать роль, тогда создастся юзер
-  if (req.role === "teacher" || req.body.role === undefined) roleId = 1;
-  else roleId = ROLES.indexOf(req.body.role) + 1;
+  // Если пользователя создает админ, то он может указать роль.
+  if (req.role === "admin") roleId = req.body.roleId;
+  // Иначе пользователя создает преподаватель. Преподаватель может создавать только user.
+  else
+    roleId = 1;
 
   if (roleId !== 1 && roleId !== 2)
     return res.status(400).send({ message: "Недопустимая роль." });
@@ -29,13 +26,13 @@ exports.createUser = (req, res) => {
     password: bcrypt.hashSync(req.body.password, config.saltRounds),
     name: req.body.name,
     surname: req.body.surname,
-    patronymic: req.body.patronymic ? req.body.patronymic : null,
-    groupId: req.body.groupId ? req.body.groupId : null,
-    roleId: roleId,
-    createdById: req.userId,
+    patronymic: req.body.patronymic ? req.body.patronymic : null, 
+    roleId: req.body.roleId,
+    creatorId: req.userId,
   })
     .then((user) => {
-      res.send({ message: "User was registered successfully!" });
+      user.setGroups(req.body.groups);
+      res.send(user);
     })
     .catch((err) => res.status(500).send({ message: err.message }));
 };

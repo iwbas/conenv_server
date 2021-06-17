@@ -2,11 +2,12 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 const Group = db.group;
+const config = require("../config/auth.config");
+var bcrypt = require("bcryptjs");
 
 const getPagination = require("../common/getPagination");
 
 exports.getAllUsers = (req, res) => {
-  console.log("getAllUsers")
   const order = req.query.sort ? [JSON.parse(req.query.sort)] : [];
   const { page, perPage } = req.query;
   const { limit, offset } = getPagination(page, perPage);
@@ -16,25 +17,36 @@ exports.getAllUsers = (req, res) => {
     limit,
     offset,
     order: order,
-    where:
-      req.role === "teacher"
-        ? {
-            createdById: req.userId,
-          }
-        : null,
+    // where:
+    //   req.role === "teacher"
+    //     ? {
+    //         creatorId: req.userId,
+    //       }
+    //     : null,
     attributes: {
-      exclude: ['password', 
-    //  'groupId', 'roleId', 'creatorId'
-    ],
+      exclude: ["password"],
+    },
+    include: {
+      association: "groups",
+      as: "groups_ids",
+      attributes: ["id"],
+      through: { attributes: [] },
     },
   })
     .then((data) => {
+      var rows = data.rows;
+
+      var rows = data.rows.map((row) => {
+        row.dataValues.groups = row.dataValues.groups.map((r) => r.id);
+        return row.dataValues;
+      });
+
       res.setHeader("Access-Control-Expose-Headers", "Content-Range");
       res.setHeader(
         "Content-Range",
         `users ${offset}-${offset + limit}/${data.count}`
       );
-      res.send(data.rows);
+      res.send(rows);
     })
     .catch((err) => {
       console.log(err);
@@ -45,30 +57,8 @@ exports.getAllUsers = (req, res) => {
 exports.getUser = (req, res) => {
   User.findByPk(req.params.id, {
     attributes: {
-      // exclude: ['password', 'groupId', 'roleId', 'createdById'],
       exclude: "password",
     },
-    include: [
-      {
-        model: User,
-        as: "createdBy",
-        attributes: ["id", "username"],
-      },
-      {
-        model: Role,
-        as: "role",
-        attributes: {
-          exclude: ["createdAt", "updatedAt"],
-        },
-      },
-      {
-        model: Group,
-        as: "group",
-        attributes: {
-          exclude: ["createdAt", "updatedAt"],
-        },
-      },
-    ],
   })
     .then((user) => {
       res.status(200).send(user);
@@ -79,47 +69,67 @@ exports.getUser = (req, res) => {
 };
 
 exports.updateUser = (req, res) => {
-  var body =
-    req.params.id == 1
-      ? {
-          password: req.body.password,
-          email: req.body.email,
-        }
-      : req.body;
+  var condition = {
+    id: req.params.id,
+  };
 
-  User.update(body, {
-    where: { id: req.params.id },
-    returning: true,
-  })
-    .then((result) => {
-      res.status(200).send(result[1][0]);
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err });
-    });
+  // Если пользователя редактирует преподаватель,
+  // то он не может редактировать не своих пользователей
+  // и не может менять пароль
+  if (req.role === "teacher") {
+    delete req.body["password"];
+    condition.creatorId = req.userId;
+  } else if (req.body.password === null || req.body.password === undefined) {
+    delete req.body["password"];
+  } else {
+    req.body.password = bcrypt.hashSync(req.body.password, config.saltRounds);
+  }
+
+  User.findOne({
+    where: condition,
+  }).then((user) => {
+    if (!user && condition.creatorId)
+      res.status(403).send({ message: "Нехватает прав" });
+
+    if (req.body.groups) user.setGroups(req.body.groups);
+    user
+      .update(req.body, {
+        returning: true,
+      })
+      .then((result) => {
+        console.log(result);
+        res.status(200).send(result.dataValues);
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message });
+      });
+  });
 };
 
 exports.deleteUser = (req, res) => {
-  console.log("DELETE", req.params.id);
+  console.log("deleteUser");
   if (req.params.id == 1)
-    return res.status(400).send({ message: "No permissions" });
+    return res.status(400).send({ message: "Нельзя удалить админа" });
 
   var condition = {
     id: req.params.id,
-  }
+  };
 
-  if (req.role === "teacher")
-    condition.createdById = req.userId;
+  if (req.role !== "admin") condition.creatorId = req.userId;
 
-  console.log(req.role, condition)
+  console.log("AJHSDHASDASD")
+  console.log(req.role, condition);
 
   User.destroy({
     where: condition,
   })
     .then((result) => {
+      console.log(result);
+      if (!result)
+        res.status(403).send({ message: "Не хватает прав" });
       res.status(200).send({ message: result });
     })
     .catch((err) => {
-      res.status(500).send({ message: err });
+      res.status(500).send({ message: err.message });
     });
 };
