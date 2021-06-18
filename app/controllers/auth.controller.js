@@ -11,11 +11,8 @@ var bcrypt = require("bcryptjs");
 exports.createUser = (req, res) => {
   var roleId;
 
-  // Если пользователя создает админ, то он может указать роль.
-  if (req.role === "admin") roleId = req.body.roleId;
-  // Иначе пользователя создает преподаватель. Преподаватель может создавать только user.
-  else
-    roleId = 1;
+  if (req.role === "admin")   roleId = 2;
+  if (req.role === "teacher") roleId = 1;
 
   if (roleId !== 1 && roleId !== 2)
     return res.status(400).send({ message: "Недопустимая роль." });
