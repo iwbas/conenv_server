@@ -17,7 +17,7 @@ exports.createUser = (req, res) => {
   if (roleId !== 1 && roleId !== 2)
     return res.status(400).send({ message: "Недопустимая роль." });
 
-  return User.create({
+    return User.create({
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, config.saltRounds),
