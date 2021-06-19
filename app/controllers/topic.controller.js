@@ -6,7 +6,7 @@ const getPagination = require("../common/getPagination");
 exports.createTopic = (req, res) => {
   return Topic.create({
     name: req.body.name,
-    ownerId: req.userId,
+    userId: req.userId,
   })
     .then((group) => {
       res.send(group);
@@ -59,7 +59,7 @@ exports.updateTopic = (req, res) => {
     id: req.params.id,
   }
 
-  if (req.role !== "admin") condition.ownerId = req.userId;
+  if (req.role !== "admin") condition.userId = req.userId;
 
   Topic.update(req.body, {
     where: condition,
@@ -80,7 +80,7 @@ exports.deleteTopic = (req, res) => {
     id: req.params.id,
   }
 
-  if (req.role !== "admin") condition.ownerId = req.userId;
+  if (req.role !== "admin") condition.userId = req.userId;
 
   Topic.destroy({
     where: condition,

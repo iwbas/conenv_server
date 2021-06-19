@@ -9,6 +9,8 @@ var bcrypt = require("bcryptjs");
 
 // isTeacherOrAdmin
 exports.createUser = (req, res) => {
+  // Администратор создает только преподавателей.
+  // Преподаватели создают только студентов.
   var roleId;
 
   if (req.role === "admin")   roleId = 2;
@@ -28,7 +30,8 @@ exports.createUser = (req, res) => {
     creatorId: req.userId,
   })
     .then((user) => {
-      user.setGroups(req.body.groups);
+      if (req.role === "teacher")
+        user.setGroups(req.body.groups);
       res.send(user);
     })
     .catch((err) => res.status(500).send({ message: err.message }));
