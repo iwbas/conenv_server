@@ -18,7 +18,7 @@ db.sequelize = sequelize;
 db.user = require('./user.model.js')(sequelize, Sequelize);
 db.group = require('./group.model')(sequelize, Sequelize, db.user);
 db.role = require('./role.model.js')(sequelize, Sequelize);
-db.task = require('./task.model.js')(sequelize, Sequelize);
+db.task = require('./task.model.js')(sequelize, Sequelize, db.user);
 db.topic = require('./topic.model.js')(sequelize, Sequelize);
 db.contest = require('./contest.model.js')(sequelize, Sequelize);
 db.contest_user = require('./contest_user.model')(sequelize, Sequelize);
@@ -87,7 +87,17 @@ db.task.hasMany(db.contest, {
 });
 db.contest.belongsTo(db.task);
 
-// user *--* contest -- DONE
+// group 1--* contest
+db.group.hasMany(db.contest, {
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+  foreignKey: {
+    allowNull: false,
+  },
+});
+db.contest.belongsTo(db.group);
+
+// // user *--* contest -- DONE
 db.user.belongsToMany(db.contest, {
   through: db.contest_user,
   as: 'contests',

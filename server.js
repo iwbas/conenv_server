@@ -100,6 +100,22 @@ function initial() {
     userId: 1,
   });
 
+  db.task.create({
+    name: "Название",
+    content: 'Контент',
+    answer: 'Hello, world',
+    topicId: 1,
+    userId: 1,
+  });
+
+  db.contest.create({
+    name: 'контест',
+    start: '2021-06-19 22:08:21.591+04',
+    end: '2021-06-19 22:08:21.591+04',
+    taskId: 1,
+    groupId: 1,
+  });
+
   db.sequelize.query(
     `CREATE RULE InsteadOfDeleteRole AS ON DELETE TO roles
     DO INSTEAD NOTHING;`
@@ -152,6 +168,8 @@ require('./app/routes/user.routes')(app);
 require('./app/routes/role.routes')(app);
 require('./app/routes/group.routes')(app);
 require('./app/routes/topic.routes')(app);
+require('./app/routes/task.routes')(app);
+require('./app/routes/contest.routes')(app);
 require('./app/routes/compile.routes')(app);
 
 const PORT = process.env.PORT || 8080;

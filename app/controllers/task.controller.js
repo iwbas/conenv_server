@@ -1,27 +1,29 @@
 const db = require("../models");
-const Topic = db.topic;
+const Task = db.task;
 
 const getPagination = require("../common/getPagination");
 
-exports.createTopic = (req, res) => {
-  return Topic.create({
-    name: req.body.name,
+exports.createTask = (req, res) => {
+  return Task.create({
+    content: req.body.content,
+    answer: req.body.answer,
+    topicId: req.body.topicId,
     userId: req.userId,
   })
-    .then((topic) => {
-      res.send(topic);
+    .then((task) => {
+      res.send(task);
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
 };
 
-exports.getAllTopics = (req, res) => {
+exports.getAllTasks = (req, res) => {
   const order = req.query.sort ? [JSON.parse(req.query.sort)] : [];
   const { page, perPage } = req.query;
   const { limit, offset } = getPagination(page, perPage);
 
-  Topic.findAndCountAll({
+  Task.findAndCountAll({
     limit,
     offset,
     order: order,
@@ -33,7 +35,7 @@ exports.getAllTopics = (req, res) => {
       res.setHeader("Access-Control-Expose-Headers", "Content-Range");
       res.setHeader(
         "Content-Range",
-        `topics ${offset}-${offset + limit}/${data.count}`
+        `tasks ${offset}-${offset + limit}/${data.count}`
       );
       res.send(data.rows);
     })
@@ -43,17 +45,17 @@ exports.getAllTopics = (req, res) => {
     });
 };
 
-exports.getTopic = (req, res) => {
-  Topic.findByPk(req.params.id)
-    .then((group) => {
-      res.status(200).send(group);
+exports.getTask = (req, res) => {
+  Task.findByPk(req.params.id)
+    .then((task) => {
+      res.status(200).send(task);
     })
     .catch((err) => {
       res.status(500).send({ message: err });
     });
 };
 
-exports.updateTopic = (req, res) => {
+exports.updateTask = (req, res) => {
   console.log(req.body)
   var condition = {
     id: req.params.id,
@@ -61,13 +63,13 @@ exports.updateTopic = (req, res) => {
 
   if (req.role !== "admin") condition.userId = req.userId;
 
-  Topic.update(req.body, {
+  Task.update(req.body, {
     where: condition,
     returning: true,
   })
     .then((result) => {
       if (result[0] === 0)
-        res.status(403).send({ message: "Вы не владелец темы" });
+        res.status(403).send({ message: "Вы не владелец задания" });
       res.status(200).send(result[1][0]);
     })
     .catch((err) => {
@@ -75,20 +77,20 @@ exports.updateTopic = (req, res) => {
     });
 };
 
-exports.deleteTopic = (req, res) => {
+exports.deleteTask = (req, res) => {
   var condition = {
     id: req.params.id,
   }
 
   if (req.role !== "admin") condition.userId = req.userId;
 
-  Topic.destroy({
+  Task.destroy({
     where: condition,
   })
     .then((result) => {
       if (!result)
-        res.status(403).send({ message: "Вы не владелец темы" });
-      res.status(200).send({ message: "Topic deleted" });
+        res.status(403).send({ message: "Вы не владелец задания" });
+      res.status(200).send({ message: "Task deleted" });
     })
     .catch((err) => {
       res.status(500).send({ message: err });

@@ -11,10 +11,6 @@ module.exports = function (app) {
 
   // get the list of notes
   app.post('/api/compile', controller.compile);
-//   app.get('/api/roles/',
-//     //[authJWT.verifyToken, authJWT.isAdmin],
-//     controller.getAllRoles
-//   );
 
   app.post('/api/run', controller.run);
 };

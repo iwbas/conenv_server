@@ -117,7 +117,6 @@ exports.deleteUser = (req, res) => {
 
   if (req.role !== "admin") condition.creatorId = req.userId;
 
-  console.log("AJHSDHASDASD")
   console.log(req.role, condition);
 
   User.destroy({
