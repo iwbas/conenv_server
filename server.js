@@ -28,50 +28,6 @@ function initial() {
     name: 'admin',
   });
 
-  Role.create({
-    name: '1',
-  });
-
-  Role.create({
-    name: '2',
-  });
-
-  Role.create({
-    name: '3',
-  });
-
-  Role.create({
-    name: '4',
-  });
-
-  Role.create({
-    name: '5',
-  });
-
-  Role.create({
-    name: '6',
-  });
-
-  Role.create({
-    name: '7',
-  });
-
-  Role.create({
-    name: '8',
-  });
-
-  Role.create({
-    name: '9',
-  });
-
-  Role.create({
-    name: '10',
-  });
-
-  Role.create({
-    name: '12',
-  });
-
   Group.create({
     name: 'Учебная группа',
   });

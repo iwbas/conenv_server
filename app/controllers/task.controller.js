@@ -5,6 +5,7 @@ const getPagination = require("../common/getPagination");
 
 exports.createTask = (req, res) => {
   return Task.create({
+    name: req.body.name,
     content: req.body.content,
     answer: req.body.answer,
     topicId: req.body.topicId,

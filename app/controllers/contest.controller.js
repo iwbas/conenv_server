@@ -5,6 +5,7 @@ const Group = db.group;
 const getPagination = require('../common/getPagination');
 
 exports.createContest = (req, res) => {
+
   return Contest.create({
     name: req.body.name,
     start: req.body.start,

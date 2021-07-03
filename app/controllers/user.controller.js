@@ -59,6 +59,12 @@ exports.getUser = (req, res) => {
     attributes: {
       exclude: "password",
     },
+    include: {
+      association: "groups",
+      as: "groups_ids",
+      attributes: ["id"],
+      through: { attributes: [] },
+    },
   })
     .then((user) => {
       res.status(200).send(user);
