@@ -1,5 +1,7 @@
 ﻿# conenv_server
 
+# Проект не закончен
+
 ## app/config/auth.config.js
 
 ```javascript
